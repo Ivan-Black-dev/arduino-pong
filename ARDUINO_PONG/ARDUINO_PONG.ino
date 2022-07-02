@@ -19,7 +19,8 @@
 #include <GyverOLED.h>
 GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
 
-int xStartPlayer, yStartPlayer, xEndPlayer, yEndPlayer, ballSpeedX, ballSpeedY = 0;
+int xStartPlayer, yStartPlayer, xEndPlayer, yEndPlayer = 0;
+int ballSpeedX, ballSpeedY, ballNowX, ballNowY = 0;
 int yPlayerNow = RACKET_START_PONT_Y;
 uint64_t gameTimer = 0;
 
@@ -30,7 +31,9 @@ void setup() {
   
   ballSpeedX = BALL_SPEED_MODULE_X;
   ballSpeedY = BALL_SPEED_MODULE_Y;
-  oled.circle(BALL_START_POINT_X, BALL_START_POINT_Y, BALL_RADIUS, OLED_FILL);
+  ballNowX = BALL_START_POINT_X;
+  ballNowY = BALL_START_POINT_Y;
+  oled.circle(ballNowX, ballNowY, BALL_RADIUS, OLED_FILL);
   
   gameTimer = millis();
 }
@@ -78,6 +81,24 @@ void loop() {
 
     }
     // Расчёт физики полёта мяча
+    if (ballNowY >= 63){
+        ballSpeedY = -ballSpeedY;
+      }
+    if (ballNowY <= 0){
+        ballSpeedY = -ballSpeedY;
+      }
+
+    // Проверка на проигрыш
+    if (ballNowX >= 124){
+        ballSpeedX = -ballSpeedX;
+      }
+    if (ballNowX <= 0){
+        ballSpeedX = -ballSpeedX;
+      }
+    oled.rect(ballNowX - BALL_RADIUS, ballNowY - BALL_RADIUS, ballNowX + BALL_RADIUS, ballNowY + BALL_RADIUS, OLED_CLEAR);
+    ballNowX += ballSpeedX;
+    ballNowY += ballSpeedY;
+    oled.circle(ballNowX, ballNowY, BALL_RADIUS, OLED_FILL);
     
   }
 }
