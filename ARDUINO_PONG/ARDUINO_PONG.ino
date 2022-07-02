@@ -8,7 +8,7 @@
 #define BALL_START_POINT_X 64
 #define BALL_START_POINT_Y 32
 #define BALL_SPEED_MODULE_X 3
-#define BALL_SPEED_MODULE_yRacketNow 2
+#define BALL_SPEED_MODULE_Y 2
 
 
 #define BUTTON_UP 2
@@ -16,11 +16,11 @@
 #define FPS 30
 
 // Библиотека дисплея
-#include <GyRacketNowverOLED.h>
-GyRacketNowverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
+#include <GyverOLED.h>
+GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
 
-int xRacketStart,  yRacketNowRacketStart, xEnd, yRacketNowEnd, ballSpeedX, ballSpeedY = 0;
-int yRacketNowNow = RACKET_START_PONT_Y;
+int xStartPlayer, yStartPlayer, xEndPlayer, yEndPlayer, ballSpeedX, ballSpeedY = 0;
+int yPlayerNow = RACKET_START_PONT_Y;
 uint64_t gameTimer = 0;
 
 void setup() {
@@ -44,33 +44,37 @@ void loop() {
     gameTimer = millis();
 
     // Управление ракеткой
-    if (digitalRead(BUTTON_UP) && yRacketNowNow > 0) {
+    if (digitalRead(BUTTON_UP) && yPlayerNow > 0) {
+      
+      xStartPlayer = RACKET_START_PONT_X;
+      yStartPlayer = yPlayerNow ;
+      xEndPlayer = RACKET_START_PONT_X + RACKET_WIDTH;
+      yEndPlayer = yPlayerNow + RACKET_HIGH;
+      
+      oled.rect(xStartPlayer, yStartPlayer, xEndPlayer, yEndPlayer, OLED_CLEAR);
+      yPlayerNow -= RACKET_MOVE_SPEED;
+      xStartPlayer = RACKET_START_PONT_X;
+      yStartPlayer = yPlayerNow ;
+      xEndPlayer = RACKET_START_PONT_X + RACKET_WIDTH;
+      yEndPlayer = yPlayerNow + RACKET_HIGH;      
+      
+      oled.rect(xStartPlayer, yStartPlayer, xEndPlayer, yEndPlayer, OLED_FILL);
 
-      xRacketStart = RACKET_START_PONT_X;
-      yRacketNowRacketStart = yRacketNowNow;
-      xEnd = RACKET_START_PONT_X + RACKET_WIDTH;
-      yRacketNowEnd = yRacketNowNow + RACKET_HIGH;
-      oled.rect(xRacketStart, yRacketNowRacketStart, xEnd, yRacketNowEnd, OLED_CLEAR);
-      yRacketNow -= RACKET_MOVE_SPEED;
-      xRacketStart = RACKET_START_PONT_X;
-      yRacketNowRacketStart = yRacketNow;
-      xEnd = RACKET_START_PONT_X + RACKET_WIDTH;
-      yRacketNowEnd = yRacketNow + RACKET_HIGH;
-      oled.rect(xRacketStart, yRacketNowRacketStart, xEnd, yRacketNowEnd, OLED_FILL);
+    } else if (digitalRead(BUTTON_DOWN) && yPlayerNow < 63 - RACKET_HIGH) {
 
-    } else if (digitalRead(BUTTON_DOWN) && yRacketNow < 63 - RACKET_HIGH) {
-
-      xRacketStart = RACKET_START_PONT_X;
-      yRacketNowRacketStart = yRacketNow;
-      xEnd = RACKET_START_PONT_X + RACKET_WIDTH;
-      yRacketNowEnd = yRacketNow + RACKET_HIGH;
-      oled.rect(xRacketStart, yRacketNowRacketStart, xEnd, yRacketNowEnd, OLED_CLEAR);
-      yRacketNow += RACKET_MOVE_SPEED;
-      xRacketStart = RACKET_START_PONT_X;
-      yRacketNowRacketStart = yRacketNow;
-      xEnd = RACKET_START_PONT_X + RACKET_WIDTH;
-      yRacketNowEnd = yRacketNow + RACKET_HIGH;
-      oled.rect(xRacketStart, yRacketNowRacketStart, xEnd, yRacketNowEnd, OLED_FILL);
+      xStartPlayer = RACKET_START_PONT_X;
+      yStartPlayer = yPlayerNow ;
+      xEndPlayer = RACKET_START_PONT_X + RACKET_WIDTH;
+      yEndPlayer = yPlayerNow + RACKET_HIGH;
+      
+      oled.rect(xStartPlayer, yStartPlayer, xEndPlayer, yEndPlayer, OLED_CLEAR);
+      yPlayerNow += RACKET_MOVE_SPEED;
+      xStartPlayer = RACKET_START_PONT_X;
+      yStartPlayer = yPlayerNow ;
+      xEndPlayer = RACKET_START_PONT_X + RACKET_WIDTH;
+      yEndPlayer = yPlayerNow + RACKET_HIGH;      
+      
+      oled.rect(xStartPlayer, yStartPlayer, xEndPlayer, yEndPlayer, OLED_FILL);
 
     }
     // Расчёт физики полёта мяча
